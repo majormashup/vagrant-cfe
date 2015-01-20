@@ -21,23 +21,38 @@ Vagrant.configure(2) do |config|
 
   config.vm.define "cfeserver" do |cfeserver|
 	# cfeserver.vm.network "private_network", ip: "222.222.222.100", virtualbox__intnet: true
-	cfeserver.vm.network "forwarded_port", guest: 5308, host: 5308
+	# cfeserver.vm.network "forwarded_port", guest: 5308, host: 5308
+	cfeserver.vm.provision "shell", inline: <<-SHELL
+		sudo yum install telnet
+		sudo yum install nmap
+		sudo cp -f /usr/share/zoneinfo/Europe/Gibraltar /etc/localtime
+	SHELL
 	cfeserver.vm.provision "cfengine" do |cfs|
 		cfs.am_policy_hub = true
 	end
   end
   
   config.vm.define "cfeclient1" do |cfeclient1|
+    cfeclient1.vm.provision "shell", inline: <<-SHELL
+		sudo yum install telnet
+		sudo yum install nmap
+		sudo cp -f /usr/share/zoneinfo/Europe/Gibraltar /etc/localtime
+	SHELL
 	# cfeclient1.vm.network "private_network", ip: "222.222.222.101", virtualbox__intnet: true
 	cfeclient1.vm.provision "cfengine" do |cfc1|
-		cfc1.policy_server_address = "10.0.2.2"	
+		cfc1.policy_server_address = "10.0.2.15"	
 	end
   end
   
   config.vm.define "cfeclient2" do |cfeclient2|
+    cfeclient2.vm.provision "shell", inline: <<-SHELL
+		sudo yum install telnet
+		sudo yum install nmap
+		sudo cp -f /usr/share/zoneinfo/Europe/Gibraltar /etc/localtime
+	SHELL
 	# cfeclient2.vm.network "private_network", ip: "222.222.222.102", virtualbox__intnet: true
 	cfeclient2.vm.provision "cfengine" do |cfc2|
-		cfc2.policy_server_address = "10.0.2.2"
+		cfc2.policy_server_address = "10.0.2.15"
 	end  
   end
   
@@ -86,8 +101,9 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
+  #   sudo cp -f /usr/share/zoneinfo/Europe/Gibraltar /etc/localtime
   # SHELL
   end
